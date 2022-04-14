@@ -1,3 +1,21 @@
 name: Build ISO
 on: [push, workflow-dispatch]
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Install Arch
+      run: curl -L https://github.com/zaoqi/github-actions-archlinux/raw/master/install.sh | sh
+    - name: Build ISO
+      id: build
+      run: |
+        sudo pacman --noconfirm -Syu archiso
+        sudo ./build.sh -v
+        echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
+    - name: Upload ISO artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: cactus.iso
+        path: ${{ steps.build.outputs.image_file }}
