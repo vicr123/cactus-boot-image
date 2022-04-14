@@ -17,7 +17,7 @@ jobs:
       id: build
       run: |
         ./build.sh -v
-        "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
+        echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
     - name: Upload ISO artifact
       uses: actions/upload-artifact@v3
       with:
