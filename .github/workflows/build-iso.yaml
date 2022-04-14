@@ -11,7 +11,8 @@ jobs:
     - name: Build ISO
       id: build
       run: |
-        sudo pacman --noconfirm -Syu archiso
+        sudo pacman --noconfirm -Sy archlinux-keyring
+        sudo pacman --noconfirm -Su archiso
         sudo ./build.sh -v
         echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
     - name: Upload ISO artifact
