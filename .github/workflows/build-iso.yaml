@@ -11,14 +11,13 @@ jobs:
     - uses: actions/checkout@v2
     - name: Set up Arch environment
       run: |
-        echo "keyserver hkp://keyserver.ubuntu.com" | sudo tee -a /etc/pacman.d/gnupg/gpg.conf
-        sudo pacman --noconfirm -Sy archlinux-keyring
-        sudo pacman --noconfirm -Su archiso
+        pacman --noconfirm -Sy archlinux-keyring
+        pacman --noconfirm -Su archiso
     - name: Build ISO
       id: build
       run: |
-        sudo ./build.sh -v
-        echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
+        ./build.sh -v
+        "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
     - name: Upload ISO artifact
       uses: actions/upload-artifact@v3
       with:
