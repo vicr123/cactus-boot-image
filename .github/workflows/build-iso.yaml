@@ -7,10 +7,11 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: Install Arch
-      run: curl -L https://github.com/hex0perating/github-actions-archlinux/raw/master/install.sh | sh
+      run: curl -L https://github.com/zaoqi/github-actions-archlinux/raw/master/install.sh | sh
     - name: Build ISO
       id: build
       run: |
+        echo "keyserver hkp://keyserver.ubuntu.com" | sudo tee -a /etc/pacman.d/gnupg/gpg.conf
         sudo pacman --noconfirm -Sy archlinux-keyring
         sudo pacman --noconfirm -Su archiso
         sudo ./build.sh -v
