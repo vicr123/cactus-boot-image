@@ -1,0 +1,6 @@
+root:x:0:root
+wheel:x:10:live
+live:x:1000:live
+scallop:x:20:live
+autologin:x:30:live
+vboxsf:x:40:live
