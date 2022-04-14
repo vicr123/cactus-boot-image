@@ -4,16 +4,19 @@ on: [push, workflow_dispatch]
 jobs:
   build:
     runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+      options: --privileged
     steps:
-    - uses: actions/checkout@v1
-    - name: Install Arch
-      run: curl -L https://github.com/zaoqi/github-actions-archlinux/raw/master/install.sh | sh
-    - name: Build ISO
-      id: build
+    - uses: actions/checkout@v2
+    - name: Set up Arch environment
       run: |
         echo "keyserver hkp://keyserver.ubuntu.com" | sudo tee -a /etc/pacman.d/gnupg/gpg.conf
         sudo pacman --noconfirm -Sy archlinux-keyring
         sudo pacman --noconfirm -Su archiso
+    - name: Build ISO
+      id: build
+      run: |
         sudo ./build.sh -v
         echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
     - name: Upload ISO artifact
