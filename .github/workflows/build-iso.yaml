@@ -38,4 +38,4 @@ jobs:
         mkdir -p ~/.ssh
         ssh-keyscan $SSH_HOST > ~/.ssh/known_hosts
         echo $SSH_KEY > ~/.ssh/transfer_key
-        scp -i ~/.ssh/transfer_key $INPUT $SSH_USER@$SSH_HOST:$SSH_DESTINATION
+        scp -i ~/.ssh/transfer_key -o StrictHostKeyChecking=no $INPUT $SSH_USER@$SSH_HOST:$SSH_DESTINATION
