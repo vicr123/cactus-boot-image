@@ -28,11 +28,14 @@ jobs:
         name: cactus.iso
         path: ${{ steps.build.outputs.image_file }}
     - name: Upload to file server
-      uses: wlixcc/SFTP-Deploy-Action@v1.2.2
-      with:
-        username: ${{ secrets.SSH_USER }}
-        server: ${{ secrets.SSH_HOST }}
-        ssh_private_key: ${{ secrets.SSH_KEY }} 
-        local_path: ${{ steps.build.outputs.image_file }}
-        remote_path: ${{ secrets.SSH_DESTINATION }} 
-        args: '-o ConnectTimeout=5'
+      env:
+        SSH_USER: ${{ secrets.SSH_USER }}
+        SSH_HOST: ${{ secrets.SSH_HOST }}
+        SSH_KEY: ${{ secrets.SSH_KEY }}
+        SSH_DESTINATION: ${{ secrets.SSH_DESTINATION }}
+        INPUT: ${{ steps.build.outputs.image_file }}
+      run: |
+        mkdir -p ~/.ssh
+        ssh-keyscan $SSH_HOST > ~/.ssh/known_hosts
+        echo $SSH_KEY > ~/.ssh/transfer_key
+        scp -i ~/.ssh/transfer_key $INPUT $SSH_USER@$SSH_HOST:$SSH_DESTINATION
