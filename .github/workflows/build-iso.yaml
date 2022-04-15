@@ -16,7 +16,7 @@ jobs:
     - name: Set up Arch environment
       run: |
         pacman --noconfirm -Sy archlinux-keyring
-        pacman --noconfirm -Su archiso
+        pacman --noconfirm -Su archiso openssh
     - name: Build ISO
       id: build
       run: |
