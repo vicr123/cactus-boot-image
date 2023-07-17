@@ -21,22 +21,30 @@ jobs:
       id: build
       run: |
         ./build.sh -v
-        echo "::set-output name=image_file::$(pwd)/$(ls out/*.iso)"
+        echo "image_file=$(pwd)/$(ls out/*.iso)" >> $GITHUB_OUTPUT
     - name: Upload ISO artifact
       uses: actions/upload-artifact@v3
       with:
         name: cactus.iso
         path: ${{ steps.build.outputs.image_file }}
+  publish:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+    - uses: actions/download-artifact@v3
+      id: download
+      with:
+        name: cactus.iso
     - name: Upload to file server
       env:
         SSH_USER: ${{ secrets.SSH_USER }}
         SSH_HOST: ${{ secrets.SSH_HOST }}
         SSH_KEY: ${{ secrets.SSH_KEY }}
         SSH_DESTINATION: ${{ secrets.SSH_DESTINATION }}
-        INPUT: ${{ steps.build.outputs.image_file }}
+        INPUT: ${{ steps.download.outputs.download-path }}
       run: |
         mkdir -p ~/.ssh
         ssh-keyscan $SSH_HOST > ~/.ssh/known_hosts
         echo $SSH_KEY > ~/.ssh/transfer_key
         chmod 400 ~/.ssh/transfer_key
-        scp -i ~/.ssh/transfer_key -o StrictHostKeyChecking=no $INPUT $SSH_USER@$SSH_HOST:$SSH_DESTINATION
+        scp -i ~/.ssh/transfer_key -o StrictHostKeyChecking=no $INPUT/*.iso $SSH_USER@$SSH_HOST:$SSH_DESTINATION
